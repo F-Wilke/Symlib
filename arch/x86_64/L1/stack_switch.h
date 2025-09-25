@@ -11,5 +11,10 @@ asm volatile("mov %gs:0x17b90, %rsp");
 
 #define SYM_RESTORE_USER_STACK(var) \
   asm volatile("mov %0, %%rsp" : : "m"(var));
+  
+#define SYM_GET_KERNEL_STACK(var) \
+  asm volatile (    "movq %%gs:0x17b90, %0"    : "=r"(var)      :    : "memory");
 
-#endif
+  #endif
+
+

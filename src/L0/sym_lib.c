@@ -7,7 +7,9 @@
 #include "L0/sym_lib.h"
 
 // This gives 1 level of toggle prevention.
+#ifndef CONFIG_NO_STICKY_ELEVATE
 __thread int is_sticky = 0;
+#endif
 
 /* Implementation is almost entirely archetecture specific, check arch dir. */
 #ifdef CONFIG_X86_64
@@ -15,9 +17,16 @@ __thread int is_sticky = 0;
 #endif
 
 static long sym_do_syscall(int work){
-  if(!is_sticky){
+  
+#ifndef CONFIG_NO_STICKY_ELEVATE
+if(!is_sticky){
+#endif
+
     return syscall(NR_ELEVATE_SYSCALL, work);
+
+#ifndef CONFIG_NO_STICKY_ELEVATE
   }
+#endif
   // XXX obviously
   return 42;
 }
