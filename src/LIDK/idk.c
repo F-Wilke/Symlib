@@ -57,10 +57,10 @@ void* sym_get_fn_address(char *symbol) {
   sym_elevate();
   // TODO: clean this up  
   uint64_t user_stack;
-  SYM_PRESERVE_USER_STACK(user_stack);
-  SYM_SWITCH_TO_KERN_STACK();
+  // SYM_PRESERVE_USER_STACK(user_stack);
+  // SYM_SWITCH_TO_KERN_STACK();
   void* result = (void*)kallsyms_lookup_name(symbol);
-  SYM_RESTORE_USER_STACK(user_stack);
+  // SYM_RESTORE_USER_STACK(user_stack);
   // Don't forget to lower
   sym_lower();
 

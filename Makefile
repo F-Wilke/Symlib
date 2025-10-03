@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS= -g -D CONFIG_X86_64 -Wall -Wextra -mno-red-zone
+CFLAGS= -g -D CONFIG_X86_64 -D CONFIG_NO_STICKY_ELEVATE -Wall -Wextra -mno-red-zone  -fomit-frame-pointer
 
 # Compiler selection
 # If CLANG=true, use clang; otherwise, use gcc
