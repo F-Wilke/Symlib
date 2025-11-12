@@ -3,7 +3,7 @@
 #ifndef __SYM_LIB_SYSCALL__
 #define __SYM_LIB_SYSCALL__
 
-#define NR_ELEVATE_SYSCALL 448
+#define NR_ELEVATE_SYSCALL 468
 #define SYSCALL_ELEVATE 1
 #define SYSCALL_LOWER -1
 #define SYSCALL_CHECK_ELEVATE_STATUS 0
@@ -76,5 +76,7 @@ extern long sym_check_elevate();
 
 // Lock current elevation status until unset
 extern int set_sticky(int is_sticky);
+
+extern long sym_elevate_lower();
 
 #endif

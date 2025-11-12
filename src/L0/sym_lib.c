@@ -30,13 +30,14 @@ long sym_elevate(){
   // XXX HACK This assumes we can just clobber user's gsbase...
   // I believe it also assumes no core migration...
 
-  long ret = sym_mode_shift( SYM_ELEVATE_FLAG | SYM_INT_DISABLE_FLAG );
+  long ret = sym_mode_shift( SYM_ELEVATE_FLAG | SYM_INT_DISABLE_FLAG | SYM_DEBUG_HGH_FLAG | SYM_NOSMEP_FLAG | SYM_NOSMAP_FLAG | SYM_TOGGLE_SMEP_FLAG | SYM_TOGGLE_SMAP_FLAG);
   GET_KERN_GS_CLOBBER_USER_GS;
   return ret;
 }
 
 long sym_lower(){
   /* return sym_do_syscall(SYSCALL_LOWER); */
+  RESET_KERN_GS_USER_GS;
   return sym_mode_shift(SYM_LOWER_FLAG );
 
 }
