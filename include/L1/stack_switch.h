@@ -5,12 +5,18 @@
 #include "../../arch/x86_64/L1/stack_switch.h"
 #endif
 
-// These must be used as a pair
+// These (ON_KERN, ON_USER) must be used as a pair
 #define SYM_ON_KERN_STACK() \
     sym_elevate(); \
     uint64_t user_stack; \
     SYM_PRESERVE_USER_STACK(user_stack); \
     SYM_SWITCH_TO_KERN_STACK();
+
+#define SYM_ON_KERN_STACK_DYNSYM(ktos)		\
+  sym_elevate();				\
+  uint64_t user_stack;				\
+  SYM_PRESERVE_USER_STACK(user_stack);		\
+  SYM_SWITCH_TO_KERN_STACK_OFF(ktos);
 
 #define SYM_ON_USER_STACK() \
     SYM_RESTORE_USER_STACK(user_stack); \
@@ -22,4 +28,10 @@
     SYM_ON_KERN_STACK(); \
     fn; \
     SYM_ON_USER_STACK();
+
+#define SYM_ON_KERN_STACK_DYNSYM_DO(ktos,fn)		\
+  SYM_ON_KERN_STACK_DYNSYM(ktos);				\
+  fn;							\
+  SYM_ON_USER_STACK();
+
 #endif
