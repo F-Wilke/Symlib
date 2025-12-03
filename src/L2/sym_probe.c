@@ -316,6 +316,8 @@ uint64_t get_hdl_pg(int core){
 
   read(fd, pg_ptr, 100);
   
+  close(fd);
+  
   hdl_pg = strtoull(pg_ptr, NULL, 0);
   return hdl_pg;
 }
