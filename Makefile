@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS= -g -D CONFIG_X86_64 -Wall -Wextra -mno-red-zone
+CFLAGS= -g -D CONFIG_X86_64 -Wall -Wextra -mno-red-zone -fno-omit-frame-pointer
 
 # Compiler selection
 # If CLANG=true, use clang; otherwise, use gcc
