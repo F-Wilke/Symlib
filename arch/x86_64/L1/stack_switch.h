@@ -10,7 +10,14 @@ asm volatile("mov %%rsp, %0" : "=m"(var) : : "memory"); \
 asm volatile("mov %gs:0xffffffff83d19010, %rsp"); //this probably depends a lot on the kernel version
 // asm volatile("mov %gs:0x17b90, %rsp"); //this changed between 5.14 and 6.16 
 
+#define SYM_SWITCH_TO_KERN_STACK_OFF(offset) \
+  asm volatile("mov %%gs:(%0), %%rsp" : : "r" (offset) :);
+
 #define SYM_RESTORE_USER_STACK(var) \
   asm volatile("mov %0, %%rsp" : : "m"(var));
 
+#define SYM_GET_KERNEL_STACK_OFF(var, offset) \
+  asm volatile (    "movq %%gs:(%1), %0"    : "=r"(var) : "r" (offset) : "memory");
+
 #endif
+
