@@ -47,3 +47,8 @@ long sym_check_elevate(){
   return sym_mode_shift(SYM_QUERY_FLAG);
 }
 
+
+__attribute__((naked)) int sym_iret() {
+  RESET_KERN_GS_USER_GS_CLI;
+  DO_IRET_LOWER;
+}

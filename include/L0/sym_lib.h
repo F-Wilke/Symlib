@@ -79,4 +79,6 @@ extern int set_sticky(int is_sticky);
 
 extern long sym_elevate_lower();
 
+extern int sym_iret();
+
 #endif
