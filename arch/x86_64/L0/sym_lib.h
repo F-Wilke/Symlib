@@ -40,13 +40,13 @@
     
     #define DO_IRET_LOWER \
     __asm__ __volatile__ ( \
-      "lea 8(%%rsp), %%rax;" \ 
+      "lea 8(%%rsp), %%rax;" \
       "pushq $0x2b;" \
       "pushq %%rax;" \
       "pushq $0x202;"\
       "pushq $0x33;"\
       "pushq -8(%%rax);"\
-      "movq $0x0, %%rax;" \ 
+      "movq $0x0, %%rax;" \
       "iretq;" \
       ::: "memory" \
     ); 
