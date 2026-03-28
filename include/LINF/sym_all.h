@@ -19,6 +19,7 @@
 // Basically we need to define the arch specific stuff, CONFIG_X86_64.
 #include "../arch/x86_64/L2/common.h"
 #include "../arch/x86_64/L1/stack_switch.h"
+#include "../arch/x86_64/L0/sym_lib.h"
 
 #include "LINF/init.h"
 #endif
