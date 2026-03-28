@@ -2,6 +2,7 @@
 // Author: Thomas Unger
 #include <unistd.h>
 #include <sys/syscall.h>
+#include <assert.h>
 
 #include <stdint.h>
 #include "L0/sym_lib.h"
@@ -64,6 +65,7 @@ long sym_elevate(){
 
 long sym_lower(){
   /* return sym_do_syscall(SYSCALL_LOWER); */
+  assert(0); // unsafe poisoned - need to remove due to race on gs switch
   RESET_KERN_GS_USER_GS;
   return sym_mode_shift(SYM_LOWER_FLAG );
 

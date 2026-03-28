@@ -19,7 +19,7 @@
 
 //restore user gs base back to 0 
 #define RESET_KERN_GS_USER_GS                           \
-  __asm__ __volatile__ (        \
+  __asm__ __volatile__ (				\
     "movl $0x0, %%edx;" \
     "movl $0x0, %%eax;" \
     "movl $0xc0000101, %%ecx;" \
