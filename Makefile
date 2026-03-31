@@ -52,7 +52,7 @@ HEADER_DIR=include
 # Obj list, put them in build dir.
 OBJ_L0 = $(patsubst src/%.c,$(BUILD_DIR)/%.o,$(SRC_L0))
 OBJ_L1 = $(patsubst src/%.c,$(BUILD_DIR)/%.o,$(SRC_L1))
-OBJ_ARCH_L1 = $(patsubst src/%.S,$(BUILD_DIR)/%.o,$(ARCH_L1))
+OBJ_L1 += $(patsubst $(ARCH_DIR)/%.S,$(BUILD_DIR)/%.o,$(ARCH_L1))
 OBJ_L2 = $(patsubst src/%.c,$(BUILD_DIR)/%.o,$(SRC_L2))
 OBJ_L3 = $(patsubst src/%.c,$(BUILD_DIR)/%.o,$(SRC_L3))
 OBJ_LINF = $(patsubst src/%.c,$(BUILD_DIR)/%.o,$(SRC_LINF))
@@ -114,7 +114,7 @@ $(LIB_L2): $(OBJ_LE2)
 	$(call boldprint, 'Built L2 lib')
 
 # BUILD L1 lib.
-$(LIB_L1): $(OBJ_LE1) $(BUILD_DIR)/$(ARCH)/L1/stack_switch.o
+$(LIB_L1): $(OBJ_LE1)
 	ar rcs $@ $^
 	$(call boldprint, 'Built L1 lib')
 
@@ -128,7 +128,7 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
 	mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@ -I $(HEADER_DIR)
 
-$(BUILD_DIR)/$(ARCH)/L1/stack_switch.o: arch/$(ARCH)/L1/stack_switch.S
+$(BUILD_DIR)/%.o: $(ARCH_DIR)/%.S
 	mkdir -p $(dir $@)
 	$(CC) -c $< -o $@ 
 
