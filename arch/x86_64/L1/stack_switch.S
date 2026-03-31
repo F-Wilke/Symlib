@@ -47,7 +47,7 @@ stack_switch_kcall_asm:
         movq    %gs:(%rdi), %rsp      // we assume it is page aligned so
 	                              // so will be 16 bit aligned
 #ifdef DEBUG
-        test    %rsp, 0xf        
+        test    $0xf, %rsp
         jz      .Lrsp_aligned     
 	xorq    %rax, %rax
 	mov     (%rax), %rax
