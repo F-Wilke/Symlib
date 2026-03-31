@@ -11,6 +11,10 @@
 typedef unsigned long (*kallsyms_lookup_name_t)(const char *name);
 static kallsyms_lookup_name_t kallsyms_lookup_name = NULL;
 
+static void * kallsyms_lookup_name_thunk(void *str) {
+  return (void *)kallsyms_lookup_name((const char *)str);
+}
+
 void parse_system_map() {
 	char kernel_version[128] = {0};
 	// Bit bigger to avoid compiler warnings.
@@ -18,7 +22,8 @@ void parse_system_map() {
 
 	FILE* fp_version = fopen("/proc/version", "r");
 	if (fp_version == NULL) {
-		fprintf(stderr, "Could not open /proc/version\n");
+	  fprintf(stderr, "Could not open /proc/version\n");
+	  assert(0);
 	}
 
 	fscanf(fp_version, "Linux version %s", kernel_version);
@@ -33,7 +38,8 @@ void parse_system_map() {
 
 	FILE* fp = fopen(system_map_path, "r");
 	if (fp == NULL) {
-		fprintf(stderr, "Could not open system map: %s\n", system_map_path);
+	  fprintf(stderr, "Could not open system map: %s\n", system_map_path);
+	  assert(0);
 	}
 
 	while (fscanf(fp, "%llx %c %s", &addr, &type, symbol) != EOF) {
@@ -46,6 +52,7 @@ void parse_system_map() {
 	fclose(fp);
 }
 
+
 void* sym_get_fn_address(char *symbol) {
   // Initialization step: parse system map to get
   // the address of the kallsyms_lookup_name routine.
@@ -55,16 +62,15 @@ void* sym_get_fn_address(char *symbol) {
 
   // Elevate to be able to call kallsyms_lookup_name
   sym_elevate();
-  // TODO: clean this up  
-  uint64_t user_stack;
-  SYM_PRESERVE_USER_STACK(user_stack);
-  SYM_SWITCH_TO_KERN_STACK();
-  void* result = (void*)kallsyms_lookup_name(symbol);
-  SYM_RESTORE_USER_STACK(user_stack);
-  // Don't forget to lower
-  sym_lower();
 
-  return (void*)result;
+  assert(0);   // JA: FIXME: we need to fix the following to pickup the correct
+               //      value for ktos_offset
+  void *result = stack_switch_kcall(-1,   // fixme
+				    kallsyms_lookup_name_thunk, (void *)symbol);
+  // Don't forget to lower
+  symbi_fast_lower();
+
+  return result;
 }
 
 void sym_l2_init(){

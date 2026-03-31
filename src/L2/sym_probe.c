@@ -45,7 +45,10 @@ static __attribute((unused)) void bp_c_entry(struct pt_regs *pt_r){
   pt_r->rip -= 1;
   unsigned char *ucp = (unsigned char *) pt_r->rip;
   /*   // assert that val we got here on was 0xcc, or int3 */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wanalyzer-infinite-loop"
   while(*ucp != 0xcc);
+#pragma GCC diagnostic pop
 
   // Fixup instruction assuming it's an 0xf
   *ucp = 0xf;
@@ -228,17 +231,20 @@ unsigned char sym_set_probe(uint64_t addr){
   // TODO if write spans pages, this will fail.
   sym_elevate();
   unsigned char ret = *(unsigned char *) addr;
-  sym_lower();
+  symbi_fast_lower();
   if (ret != 0xf){
     fprintf(stderr, "Error, byte to be replaced by int3 0xcc was not 0xf as needed by hard coded interposer.\n");
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wanalyzer-infinite-loop"
     while(1);
+#pragma GCC diagnostic pop
   }
   sym_make_pg_writable(addr);
 
   sym_elevate();
   // Magic write int3 instruction.
   *(unsigned char *) addr = 0xcc;
-  sym_lower();
+  symbi_fast_lower();
 
   return ret;
 }

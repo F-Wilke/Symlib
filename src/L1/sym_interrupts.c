@@ -14,7 +14,7 @@ void sym_load_idtr(struct dtr *location) {
   sym_elevate();
   // put value in idtr from memory
   LOAD_IDT;
-  sym_lower();
+  symbi_fast_lower();
 }
 
 // Get IDTR
@@ -24,7 +24,7 @@ void sym_store_idt_desc(struct dtr *location) {
   // software emulation if not elevated.
   sym_elevate();
   STORE_IDT;
-  sym_lower();
+  symbi_fast_lower();
 }
 
 // Load idtr with raw base and bound
@@ -68,7 +68,7 @@ void sym_copy_system_idt(unsigned char *sym_idt_base){
 
   sym_elevate();
   memcpy( (void *) sym_idt_base, (const void *) idtr.base, IDT_SZ_BYTES);
-  sym_lower();
+  symbi_fast_lower();
 
 }
 
@@ -77,7 +77,7 @@ void * sym_memcpy(void* dest, void *src, size_t sz){
   void * ret;
   sym_elevate();
   ret = memcpy( dest, src, sz);
-  sym_lower();
+  symbi_fast_lower();
   return ret;
 }
 
@@ -102,7 +102,7 @@ void sym_set_idt_desc(unsigned char *idt_base, unsigned int idx, union idt_desc 
   sym_elevate();
   // Do deep copy
   *my_desc = *new_desc;
-  sym_lower();
+  symbi_fast_lower();
 }
 
 // TODO better name
@@ -113,7 +113,7 @@ void * sym_get_addr_from_desc(union idt_desc *desc){
   addr.dcmp.lo  = desc->fields.lo_addr;
   addr.dcmp.mid = desc->fields.mid_addr;
   addr.dcmp.hi  = desc->fields.hi_addr;
-  sym_lower();
+  symbi_fast_lower();
   return (void *) addr.raw;
 }
 
@@ -125,7 +125,7 @@ void sym_update_desc_handler(union idt_desc *desc, void *p){
   desc->fields.lo_addr  = addr.dcmp.lo;
   desc->fields.mid_addr = addr.dcmp.mid;
   desc->fields.hi_addr  = addr.dcmp.hi;
-  sym_lower();
+  symbi_fast_lower();
 }
 
 
@@ -135,7 +135,7 @@ void sym_load_addr_from_desc(union idt_desc *desc, union idt_addr *addr){
   addr->dcmp.lo  = desc->fields.lo_addr;
   addr->dcmp.mid = desc->fields.mid_addr;
   addr->dcmp.hi  = desc->fields.hi_addr;
-  sym_lower();
+  symbi_fast_lower();
 }
 
 // Loads desc from an addr.
@@ -144,7 +144,7 @@ void sym_load_desc_from_addr(union idt_desc *desc, union idt_addr *addr){
   desc->fields.lo_addr  = addr->dcmp.lo;
   desc->fields.mid_addr = addr->dcmp.mid;
   desc->fields.hi_addr  = addr->dcmp.hi;
-  sym_lower();
+  symbi_fast_lower();
 }
 
 // TODO this is a stupid idt type. Try void *
@@ -166,7 +166,7 @@ void sym_print_idt_desc(unsigned char *idt, unsigned int idx){
   printf("type:      %x\n",   my_desc->fields.type   );
   printf("dpl:       %x\n",   my_desc->fields.dpl    );
   printf("p:         %x\n",   my_desc->fields.p      );
-  sym_lower();
+  symbi_fast_lower();
 
 }
 

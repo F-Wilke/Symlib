@@ -110,16 +110,16 @@ extern struct pte * sym_get_pte(uint64_t addr, unsigned int *level);
 
 // Execute disable
 static inline int sym_is_pte_execute_disable(struct pte *pte) {
-  sym_elevate(); int ret = pte->XD; sym_lower();
+  sym_elevate(); int ret = pte->XD; symbi_fast_lower();
   return ret;
 }
 
 static inline void sym_set_pte_execute_disable(struct pte *pte) {
-  sym_elevate(); pte->XD = 1; sym_lower();
+  sym_elevate(); pte->XD = 1; symbi_fast_lower();
 }
 
 static inline void sym_clear_pte_execute_disable(struct pte *pte) {
-  sym_elevate(); pte->XD = 0; sym_lower();
+  sym_elevate(); pte->XD = 0; symbi_fast_lower();
 }
 
 // TODO these should all take ptrs right?

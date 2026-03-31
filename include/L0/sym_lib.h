@@ -69,10 +69,12 @@ extern long sym_mode_shift(uint64_t flags);
 extern long sym_elevate();
 
 // Execute syscall clearing elevated bit
-extern long sym_lower();
+// extern long sym_lower();
+extern void symbi_fast_lower(void);
+
 
 // Query elevation status
-extern long sym_check_elevate();
+extern long sym_check_elevate(void);
 
 // Lock current elevation status until unset
 extern int set_sticky(int is_sticky);

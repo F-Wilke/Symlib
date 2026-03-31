@@ -40,6 +40,6 @@ void sym_mitigate_pf_cleanup(){
   // Make sure we lower.
   if(sym_check_elevate()){
     printf("Didn't expect to be elevated\n");
-    sym_lower();
+    symbi_fast_lower();
   }
 }

@@ -54,12 +54,18 @@ static void pg_ft_c_entry(){
 
   if(!cr3_reg){
     /* myprintk("Error, cr3_reg never set\n"); */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wanalyzer-infinite-loop"
     while(1);
+#pragma GCC diagnostic pop
   }
 
   if(cr3_reg  != my_cr3){
     /* myprintk("This is unsupported :/ \n"); */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wanalyzer-infinite-loop"
     while(1);
+#pragma GCC diagnostic pop
   }
 
   /* Are we an instruction fetch? */
@@ -334,7 +340,7 @@ void sym_toggle_pg_ft_ist(unsigned char *my_idt, unsigned int enable){
   desc_old = sym_get_idt_desc(my_idt, PG_FT_IDX);
 
   // Copy descriptor to local var
-  sym_elevate(); desc_new = *desc_old; sym_lower();
+  sym_elevate(); desc_new = *desc_old; symbi_fast_lower();
 
   // Force IST usage
   desc_new.fields.ist = enable;
@@ -342,7 +348,7 @@ void sym_toggle_pg_ft_ist(unsigned char *my_idt, unsigned int enable){
   // Write into user table
   sym_elevate();
   sym_set_idt_desc(my_idt, PG_FT_IDX, &desc_new);
-  sym_lower();
+  symbi_fast_lower();
 }
 
 // TODO: Depricate this usage
@@ -361,11 +367,11 @@ sym_get_pte(uint64_t addr, unsigned int *level)
   lookup_address_t my_lookup_address = sym_get_fn_address("lookup_address");
   sym_elevate();
   struct pte * ret = my_lookup_address(addr, level);
-  sym_lower();
+  symbi_fast_lower();
   return ret;
 }
 void sym_print_pte(struct pte *pte){
-  sym_elevate(); uint64_t raw_pte = *(uint64_t *)pte; sym_lower();
+  sym_elevate(); uint64_t raw_pte = *(uint64_t *)pte; symbi_fast_lower();
   printf("PTE at %p contains %lx\n", pte, raw_pte);
 };
 
@@ -378,7 +384,7 @@ void sym_make_pg_writable(uint64_t addr){
 
   struct pte* pte_p = (struct pte*) ret;
   pte_p->RW = 1;
-  sym_lower();
+  symbi_fast_lower();
 }
 
 void sym_make_pg_unwritable(uint64_t addr){
@@ -387,7 +393,7 @@ void sym_make_pg_unwritable(uint64_t addr){
   // Get PTE 
   struct pte* pte_p = sym_get_pte(addr, &level);
   pte_p->RW = 0;
-  sym_lower();
+  symbi_fast_lower();
 }
 /* void write_ktext_addr(uint64_t addr, char *s, int len){ */
 /*   // TODO if write spans pages, this will fail. */
