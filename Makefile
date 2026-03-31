@@ -1,5 +1,6 @@
 CC=gcc
-CFLAGS= -g -D CONFIG_X86_64 -Wall -Wextra -mno-red-zone -fno-omit-frame-pointer
+ARCH:=$(shell uname -m)
+CFLAGS= -g -D CONFIG_X86_64 -Wall -Wextra
 
 # Compiler selection
 # If CLANG=true, use clang; otherwise, use gcc
@@ -23,16 +24,18 @@ endif
 
 # SRC DIRS
 SRC_DIR=src
+ARCH_DIR=arch/$(ARCH)
 
 # SRC FILES
 SRC_L0=$(wildcard $(SRC_DIR)/L0/*.c)
 SRC_L1=$(wildcard $(SRC_DIR)/L1/*.c)
+ARCH_L1=$(wildcard $(ARCH_DIR)/L1/*.S)
 SRC_L2=$(wildcard $(SRC_DIR)/L2/*.c)
 SRC_L3=$(wildcard $(SRC_DIR)/L3/*.c)
 SRC_LINF=$(wildcard $(SRC_DIR)/LINF/*.c)
 SRC_LIDK=$(wildcard $(SRC_DIR)/LIDK/*.c)
 
-ALL_SRC=$(SRC_L0) $(SRC_L1) $(SRC_L2) $(SRC_L3) $(SRC_LINF) $(SRC_LIDK)
+ALL_SRC=$(SRC_L0) $(SRC_L1) $(ARCH_L1) $(SRC_L2) $(SRC_L3) $(SRC_LINF) $(SRC_LIDK)
 
 # BUILD DIRECTORIES
 BUILD_DIR=build
@@ -49,6 +52,7 @@ HEADER_DIR=include
 # Obj list, put them in build dir.
 OBJ_L0 = $(patsubst src/%.c,$(BUILD_DIR)/%.o,$(SRC_L0))
 OBJ_L1 = $(patsubst src/%.c,$(BUILD_DIR)/%.o,$(SRC_L1))
+OBJ_ARCH_L1 = $(patsubst src/%.S,$(BUILD_DIR)/%.o,$(ARCH_L1))
 OBJ_L2 = $(patsubst src/%.c,$(BUILD_DIR)/%.o,$(SRC_L2))
 OBJ_L3 = $(patsubst src/%.c,$(BUILD_DIR)/%.o,$(SRC_L3))
 OBJ_LINF = $(patsubst src/%.c,$(BUILD_DIR)/%.o,$(SRC_LINF))
@@ -56,7 +60,7 @@ OBJ_LIDK = $(patsubst src/%.c,$(BUILD_DIR)/%.o,$(SRC_LIDK))
 
 # Objects less than or equal to i.
 OBJ_LE0  =$(OBJ_L0)  $(OBJ_LIDK) #NOTE here's IDK, it gets into everything.
-OBJ_LE1  =$(OBJ_LE0) $(OBJ_L1)
+OBJ_LE1  =$(OBJ_LE0) $(OBJ_L1) 
 OBJ_LE2  =$(OBJ_LE1) $(OBJ_L2)
 OBJ_LE3  =$(OBJ_LE2) $(OBJ_L3)
 OBJ_LEINF=$(OBJ_LE3) $(OBJ_LINF)
@@ -110,7 +114,7 @@ $(LIB_L2): $(OBJ_LE2)
 	$(call boldprint, 'Built L2 lib')
 
 # BUILD L1 lib.
-$(LIB_L1): $(OBJ_LE1)
+$(LIB_L1): $(OBJ_LE1) $(BUILD_DIR)/$(ARCH)/L1/stack_switch.o
 	ar rcs $@ $^
 	$(call boldprint, 'Built L1 lib')
 
@@ -120,9 +124,13 @@ $(LIB_L0): $(OBJ_LE0)
 	$(call boldprint, 'Built L0 lib')
 
 # TODO this shouldn't build all dirs if only building subset of libs...
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c 
 	mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@ -I $(HEADER_DIR)
+
+$(BUILD_DIR)/$(ARCH)/L1/stack_switch.o: arch/$(ARCH)/L1/stack_switch.S
+	mkdir -p $(dir $@)
+	$(CC) -c $< -o $@ 
 
 # XXX what is this trying to do? LIB_LIDK isn't a thing???
 # BUILD LINF lib.
