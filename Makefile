@@ -1,6 +1,6 @@
 CC=gcc
 ARCH:=$(shell uname -m)
-CFLAGS= -g -D CONFIG_X86_64 -Wall -Wextra
+CFLAGS= -g -D CONFIG_X86_64 -Wall -Wextra -O2
 
 # Compiler selection
 # If CLANG=true, use clang; otherwise, use gcc
