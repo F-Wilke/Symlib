@@ -70,7 +70,7 @@ extern long sym_elevate();
 
 // Execute syscall clearing elevated bit
 // extern long sym_lower();
-extern void symbi_fast_lower(void);
+extern int symbi_fast_lower(void);
 
 
 // Query elevation status
