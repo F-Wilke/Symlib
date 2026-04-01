@@ -35,20 +35,23 @@ long sym_elevate(){ //this needs to be page aligned. Otherwise we can suffer a p
   // I believe it also assumes no core migration...
 
   long ret;
-  register long rax __asm__("rax") = NR_ELEVATE_SYSCALL;
-  register uint64_t rdi __asm__("rdi") = SYM_ELEVATE_FLAG | SYM_INT_DISABLE_FLAG | 
+  long syscall = NR_ELEVATE_SYSCALL;
+  uint64_t flags = SYM_ELEVATE_FLAG | SYM_INT_DISABLE_FLAG | 
                                           SYM_NOSMEP_FLAG | SYM_NOSMAP_FLAG | 
                                           SYM_TOGGLE_SMEP_FLAG | SYM_TOGGLE_SMAP_FLAG;
   
   // Integrated syscall assembly - avoids libc syscall wrapper
   __asm__ __volatile__ (
     "syscall;"                   // invoke syscall
-    : "=a" (rax)                 // output: rax contains return value
-    : "r" (rdi)  // input: rdi contains flags, rax contains syscall number
-    : "%rcx", "%r11", "memory"   // syscall clobbers rcx, r11, and memory
+    "movl $0xc0000102, %%ecx;" 
+    "rdmsr;"                   
+    "movl $0xc0000101, %%ecx;" 
+    "wrmsr;"                   
+    "sti;"                     
+    : "=a" (ret)                 // output: rax contains return value
+    : "a" (syscall), "D" (flags)       // input: rdi contains flags, rax contains syscall number
+    : "%rcx", "%r11", "%edx", "%ecx", "memory"   // syscall clobbers rcx, r11, and memory
   );
-  GET_KERN_GS_CLOBBER_USER_GS;
-  ret = rax;
   return ret;
 }
 #else
