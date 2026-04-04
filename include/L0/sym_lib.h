@@ -66,7 +66,7 @@ Legend: Set (Clear)
 extern long sym_mode_shift(uint64_t flags);
 
 // Execute syscall setting elevated bit. Calls glibc syscall fn.
-extern long sym_elevate();
+extern long sym_elevate(void);
 
 // Execute syscall clearing elevated bit
 // extern long sym_lower();
@@ -79,8 +79,8 @@ extern long sym_check_elevate(void);
 // Lock current elevation status until unset
 extern int set_sticky(int is_sticky);
 
-extern long sym_elevate_lower();
+extern long sym_elevate_lower(void);
 
-extern int sym_iret();
+extern int sym_iret(void);
 
 #endif
