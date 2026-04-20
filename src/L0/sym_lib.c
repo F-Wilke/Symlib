@@ -65,6 +65,24 @@ long sym_elevate(){
 }
 #endif
 
+#ifdef CONFIG_X86_64
+int sym_fast_lower() {
+  int ret;
+  __asm__ __volatile__ (
+    "push %%rcx;"                
+    "push %%r11;"                
+    "call symbi_fast_lower_sysret;"
+    "pop %%r11;"
+    "pop %%rcx;"
+    : "=a" (ret)                 // output: rax contains return value
+    :                            // no input
+    : "memory"  // clobbers memory, we manually restore rcx and r11
+  );
+  return ret;
+
+}
+#endif
+
 
 long sym_lower(){
   /* return sym_do_syscall(SYSCALL_LOWER); */
