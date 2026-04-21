@@ -66,7 +66,7 @@ long sym_elevate(){
 #endif
 
 #ifdef CONFIG_X86_64
-int sym_fast_lower() {
+int symbi_fast_lower() {
   int ret;
   __asm__ __volatile__ (
     "push %%rcx;"                
