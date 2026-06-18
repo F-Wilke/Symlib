@@ -7,6 +7,9 @@
 #include "../../arch/x86_64/L1/sym_interrupts.h"
 #endif
 
+
+int KCUT_THRESHOLD; //threshold for how many times to call shortcut before falling back to normal system call.
+
 // Fn Documentation in header file.
 
 // Store into IDTR with struct dtr *
