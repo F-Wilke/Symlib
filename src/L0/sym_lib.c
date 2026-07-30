@@ -36,9 +36,14 @@ long sym_elevate(){ //this needs to be page aligned. Otherwise we can suffer a p
 
   long ret;
   long syscall = NR_ELEVATE_SYSCALL;
-  uint64_t flags = SYM_ELEVATE_FLAG | SYM_INT_DISABLE_FLAG | 
-                                          SYM_NOSMEP_FLAG | SYM_NOSMAP_FLAG | 
-                                          SYM_TOGGLE_SMEP_FLAG | SYM_TOGGLE_SMAP_FLAG;
+  uint64_t flags =
+    SYM_ELEVATE_FLAG     |
+    SYM_INT_DISABLE_FLAG |
+    SYM_NOSMEP_FLAG      |
+    SYM_NOSMAP_FLAG      | 
+    SYM_TOGGLE_SMEP_FLAG |
+    SYM_TOGGLE_SMAP_FLAG |
+    SYM_ENABLE_AC;
   
   // Integrated syscall assembly - avoids libc syscall wrapper
   __asm__ __volatile__ (
@@ -59,7 +64,13 @@ long sym_elevate(){
   // XXX HACK This assumes we can just clobber user's gsbase...
   // I believe it also assumes no core migration...
 
-  long ret = sym_mode_shift( SYM_ELEVATE_FLAG | SYM_INT_DISABLE_FLAG | SYM_NOSMEP_FLAG | SYM_NOSMAP_FLAG | SYM_TOGGLE_SMEP_FLAG | SYM_TOGGLE_SMAP_FLAG);
+  long ret = sym_mode_shift( SYM_ELEVATE_FLAG     |
+			     SYM_INT_DISABLE_FLAG |
+			     SYM_NOSMEP_FLAG      |
+			     SYM_NOSMAP_FLAG      |
+			     SYM_TOGGLE_SMEP_FLAG |
+			     SYM_TOGGLE_SMAP_FLAG |
+			     SYM_ENABLE_AC);
   GET_KERN_GS_CLOBBER_USER_GS;
   return ret;
 }

@@ -1,4 +1,4 @@
-#include <stdint.h>
+xo#include <stdint.h>
 
 #ifndef __SYM_LIB_SYSCALL__
 #define __SYM_LIB_SYSCALL__
@@ -18,9 +18,9 @@
 /*
 Symbiote flags:
 
-31              15      10   9   8   7   6   5   4   3   2   1   0
+31              15  11  10   9   8   7   6   5   4   3   2   1   0
 +------------------------------------------+---+------+---+---+---+
-|                      |FL |R\I|TA |TE |SMA|SME|  DB  |ID | Q | E |
+|                  |AC |FL |R\I|TA |TE |SMA|SME|  DB  |ID | Q | E |
 +------------------------------------------+---+------+---+---+---+
 
 Legend: Set (Clear)
@@ -34,6 +34,7 @@ Legend: Set (Clear)
 8 TA: toggle SMAP (don't)
 9 R/I: Return from elevate using RET (IRET)
 10 FL: Fast lower via SYSRET (SYSCALL -> SYSRET)
+11 AC: enable AC flag on elevated execution
 */
 
 
@@ -60,6 +61,8 @@ Legend: Set (Clear)
 #define SYM_RET_FLAG (1<<9)
 // 10 Don't do syscall, just SYSRET to self.
 #define SYM_FAST_LOWER_FLAG (1<<10)
+// 11 enable AC (Access control bit) during elevated execution
+#define SYM_ENABLE_AC (1<<11)
 
 
 // 'Q'uery, 'D'isable interrupts, 'E'levate
