@@ -1,4 +1,4 @@
-xo#include <stdint.h>
+#include <stdint.h>
 
 #ifndef __SYM_LIB_SYSCALL__
 #define __SYM_LIB_SYSCALL__
